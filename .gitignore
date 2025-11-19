@@ -1,0 +1,54 @@
+# 🌐 Ignorar node_modules em qualquer lugar
+**/node_modules/
+
+# 🔐 Arquivos de ambiente
+**/.env
+
+# 🛠️ Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 📦 Diretórios de build Angular
+frontend/sysmlab/dist/
+frontend/sysmlab/.angular/
+
+# ⚙️ Configurações do editor
+.vscode/
+**/.vscode/
+**/.idea/
+*.sublime-workspace
+*.sublime-project
+
+# 🧪 Arquivos temporários e de teste
+*.tmp
+*.temp
+*.swp
+*.bak
+*.spec.ts
+
+# 📁 Sistema operacional
+.DS_Store
+Thumbs.db
+
+# 📄 Angular build e cache
+frontend/sysmlab/.angular/cache/
+frontend/sysmlab/.angular/web/
+
+# 🚀 Angular output
+frontend/sysmlab/out-tsc/
+
+# 🔍 TypeScript
+**/*.tsbuildinfo
+
+# 📚 Documentação gerada
+docs/
+
+# 🧪 Coverage de testes
+coverage/
+frontend/sysmlab/coverage/
+
+# 🔄 Arquivos de lock (opcional, se não quiser versionar)
+# package-lock.json
+# yarn.lock
