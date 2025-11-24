@@ -99,23 +99,23 @@
 
 .parameter-value-container {
   display: flex;
-  align-items: flex-end;
-  margin-bottom: 1rem;
+  align-items: center; /* centraliza verticalmente */
+  gap: 0.25rem;        /* espaçamento entre valor e unidade */
 }
 
 .parameter-value {
-  font-size: 2.25rem;
+  font-size: 1.9rem;
   font-weight: 800;
   color: #0878E7;
-  margin-right: 0.5rem;
 }
 
 .parameter-unit {
   font-size: 1.25rem;
   font-weight: 500;
   color: #6b7280;
-  margin-bottom: 0.25rem;
+  margin: 0; /* remove o margin-bottom que desalinhava */
 }
+
 
 /* =========================================
    PROGRESS BAR
