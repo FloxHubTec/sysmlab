@@ -2,6 +2,7 @@
 import { Routes } from '@angular/router';
 import { DashboardTvComponent } from './dashboard-tv/dashboard-tv.component';
 import { ResultadoAnaliseComponent } from './resultado-analise/resultado-analise.component';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,11 @@ export const routes: Routes = [
     path: 'dashboard-tv',
     component: DashboardTvComponent,
     title: 'Dashboard TV'
+  },
+  {
+    path: "login",
+    component: LoginComponent,
+    title: "Login"
   },
   {
     path: '',
