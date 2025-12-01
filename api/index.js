@@ -4,6 +4,7 @@ const cors = require('cors');
 const parametroRoutes = require('./routes/ParametroRoutes');
 const resultadoAnaliseRoutes = require('./routes/ResultadoAnaliseRoutes'); 
 const app = express();
+// const authMiddleware = require("./middlewares/authMiddleware");
 
 // Carrega variáveis de ambiente do arquivo .env
 dotenv.config();

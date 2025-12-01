@@ -1,3 +1,4 @@
+import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component';
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { DashboardTvComponent } from './dashboard-tv/dashboard-tv.component';
@@ -19,6 +20,11 @@ export const routes: Routes = [
     path: "login",
     component: LoginComponent,
     title: "Login"
+  },
+  {
+    path: "recuperar-senha",
+    component: RecuperarSenhaComponent,
+    title: "Recuperar Senha"
   },
   {
     path: '',
