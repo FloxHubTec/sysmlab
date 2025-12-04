@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors'); 
 const parametroRoutes = require('./routes/ParametroRoutes');
 const resultadoAnaliseRoutes = require('./routes/ResultadoAnaliseRoutes'); 
+const authRoutes = require('./routes/AuthRoutes')
 const app = express();
 // const authMiddleware = require("./middlewares/authMiddleware");
 
@@ -17,9 +18,13 @@ const ENV = process.env.NODE_ENV || 'development';
 app.use(express.json());
 app.use(cors());
 
+//rota de login
+app.use('',authRoutes);
+
 // Rotas
 app.use('/dashboardtv', parametroRoutes);
 app.use('/resultados-analise', resultadoAnaliseRoutes); 
+
 
 // Rota 404 - Para endpoints não encontrados
 app.use('*', (req, res) => {
