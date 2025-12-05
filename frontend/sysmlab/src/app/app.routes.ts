@@ -1,11 +1,13 @@
-import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component';
+import { RecuperarSenhaComponent } from './acessos/recuperar-senha/recuperar-senha.component';
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { DashboardTvComponent } from './dashboard-tv/dashboard-tv.component';
+import { DashboardTvComponent } from './acessos/dashboard-tv/dashboard-tv.component';
 import { ResultadoAnaliseComponent } from './resultado-analise/resultado-analise.component';
-import { LoginComponent } from './login/login.component';
-import { AuthGuard } from './auth/auth.guard';
-import { NovaSenhaComponent } from './nova-senha/nova-senha.component';
+import { LoginComponent } from './acessos/login/login.component';
+import { NovaSenhaComponent } from './acessos/nova-senha/nova-senha.component';
+import { AuthGuard } from './acessos/auth/auth.guard';
+import { CadastroUsuarioComponent } from './acessos/cadastro-usuario/cadastro-usuario.component';
+
 
 export const routes: Routes = [
   {
@@ -24,6 +26,11 @@ export const routes: Routes = [
     path: "login",
     component: LoginComponent,
     title: "Login"
+  },
+  {
+    path:"cadastro-usuario",
+    component: CadastroUsuarioComponent,
+    title: "Cadastro de Usuário"
   },
   {
     path: "recuperar-senha",
