@@ -1,0 +1,38 @@
+<div class="grafico-container">
+
+  <div class="header">
+    <div class="logo-container">
+      <div class="logo-icon">
+        <i class="fa-solid fa-flask"></i>
+      </div>
+      <h1 class="logo-text">SYSmLab</h1>
+    </div>
+    <h2 class="header-title">Gráfico de Parâmetros</h2>
+  </div>
+
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+          <div class="card-body p-4">
+
+            <h4 class="card-title mb-4 fw-bold text-secondary">
+              Parâmetros
+            </h4>
+
+            <div class="chart-wrapper">
+              <canvas baseChart
+                [data]="barChartData"
+                [options]="barChartOptions"
+                [type]="barChartType">
+              </canvas>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

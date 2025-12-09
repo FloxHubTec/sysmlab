@@ -3,6 +3,11 @@ const dotenv = require('dotenv');
 const cors = require('cors'); 
 const parametroRoutes = require('./routes/ParametroRoutes');
 const resultadoAnaliseRoutes = require('./routes/ResultadoAnaliseRoutes'); 
+const graficoParametrosRoutes = require('./routes/GraficoParametroRoutes');
+const alertasRoutes = require('./routes/AlertaRoutes');
+const dashboardWebRoutes = require('./routes/DashboardWebRoutes');
+const amostraRoutes = require('./routes/AmostraRoutes');
+
 const authRoutes = require('./routes/AuthRoutes')
 const app = express();
 // const authMiddleware = require("./middlewares/authMiddleware");
@@ -24,7 +29,6 @@ app.use('',authRoutes);
 // Rotas
 app.use('/dashboardtv', parametroRoutes);
 app.use('/resultados-analise', resultadoAnaliseRoutes); 
-
 
 // Rota 404 - Para endpoints não encontrados
 app.use('*', (req, res) => {
