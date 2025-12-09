@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DashboardTvComponent } from './acessos/dashboard-tv/dashboard-tv.component';
+import { DashboardTvComponent } from './dashboard-tv/dashboard-tv.component';
 
 @Component({
   selector: 'app-root',
