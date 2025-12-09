@@ -1,6 +1,4 @@
-<!-- src/app/resultado-analise/resultado-analise.component.html -->
 <div class="resultado-container">
-  <!-- Header -->
   <div class="header">
     <div class="logo-container">
       <div class="logo-icon">
@@ -8,16 +6,20 @@
       </div>
       <h1 class="logo-text">SYSmLab</h1>
     </div>
-    <h2 class="header-title">Gerenciamento dos Resultados de Análise</h2>
+    <h2 class="header-title">Gerenciamento de Resultados</h2>
   </div>
 
   <div class="container">
-    <!-- Formulário -->
 
     <div class="form-section">
-      <h5 class="mb-3"><i class="bi bi-plus-circle"></i> Inserir Novo Resultado</h5>
+      <h5 class="mb-3">
+        <i class="bi" [class.bi-plus-circle]="!isEditing" [class.bi-pencil-square]="isEditing"></i>
+        {{ isEditing ? 'Editar Resultado' : 'Inserir Novo Resultado' }}
+      </h5>
+
       <form [formGroup]="resultadoForm" (ngSubmit)="onSubmit()">
         <div class="row g-3">
+
           <div class="col-md-3">
             <label class="form-label">Valor Medido *</label>
             <input type="number" step="0.0001" class="form-control" formControlName="valor_medido"
@@ -43,23 +45,9 @@
 
           <div class="col-md-3">
             <label class="form-label">N° da Amostra (Busca automática)</label>
-            <input type="text" class="form-control" [value]="numeroAmostraSelecionada" disabled
+            <input type="text" class="form-control bg-light" [value]="numeroAmostraSelecionada" disabled
               placeholder="Selecione o código">
           </div>
-
-          <!-- <div class="col-md-3">
-            <label class="form-label">N° da Amostra *</label>
-            <select class="form-select" formControlName="amostra_id"
-              [class.is-invalid]="resultadoForm.get('amostra_id')?.invalid && resultadoForm.get('amostra_id')?.touched">
-              <option value="" selected disabled>Selecione...</option>
-              <option *ngFor="let amostra of amostras" [value]="amostra.id">
-                {{ amostra.numero_da_amostra }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="resultadoForm.get('amostra_id')?.errors?.['required']">
-              Número da amostra é obrigatório
-            </div>
-          </div> -->
 
           <div class="col-md-3">
             <label class="form-label">Parâmetro *</label>
@@ -87,11 +75,9 @@
             <div class="invalid-feedback" *ngIf="resultadoForm.get('datacoleta')?.errors?.['required']">
               Data da coleta é obrigatória
             </div>
-
             <div class="invalid-feedback" *ngIf="resultadoForm.get('datacoleta')?.errors?.['pattern']">
               Formato inválido. Use dd/mm/aaaa
             </div>
-
             <div class="invalid-feedback" *ngIf="resultadoForm.get('datacoleta')?.errors?.['dataFutura']">
               A data não pode ser futura.
             </div>
@@ -126,27 +112,9 @@
           </div>
 
           <div class="col-12 text-end">
-            <!--aviso-->
-            <div class="row mt-3" *ngIf="erroMatrizIncompativel">
-              <div class="col-12">
-                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                  <i class="bi bi-x-octagon-fill me-2" style="font-size: 1.5rem;"></i>
-
-                  <div class="w-100 text-end">
-                    <strong>Inconsistência Identificada:</strong>
-                    <br>
-                    A Amostra pertence à matriz <strong>{{ amostraSelecionada?.matriz_nome }}</strong>,
-                    mas o Parâmetro pertence à matriz <strong>{{ parametroSelecionado?.matriz_nome }}</strong>.
-                    <br>
-                    <em>Selecione um parâmetro compatível.</em>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-success"
-              [disabled]="loading || resultadoForm.invalid || erroMatrizIncompativel">
-              <i class="bi bi-check-lg"></i>
+            <button type="submit" class="btn" [class.btn-success]="!isEditing" [class.btn-primary]="isEditing"
+              [disabled]="loading || resultadoForm.invalid">
+              <i class="bi" [class.bi-check-lg]="!isEditing" [class.bi-save]="isEditing"></i>
               {{ isEditing ? 'Atualizar' : 'Inserir' }} Resultado
             </button>
 
@@ -158,7 +126,6 @@
       </form>
     </div>
 
-    <!-- Filtros -->
     <div class="filter-section">
       <h5 class="mb-3"><i class="bi bi-funnel"></i> Filtros</h5>
       <div class="row g-3">
@@ -202,7 +169,6 @@
       </div>
     </div>
 
-    <!-- Tabela -->
     <div class="card">
       <div class="card-header bg-white">
         <div class="d-flex justify-content-between align-items-center">
@@ -251,7 +217,6 @@
                   </span>
                 </td>
                 <td>
-
                   <button class="btn btn-sm btn-outline-primary action-btn" (click)="visualizarResultado(resultado)"
                     title="Visualizar Detalhes">
                     <i class="fas fa-eye"></i>
@@ -266,7 +231,6 @@
                     title="Excluir" [disabled]="loading">
                     <i class="fas fa-trash"></i>
                   </button>
-
                 </td>
               </tr>
               <tr *ngIf="resultadosPaginados.length === 0 && !loading">
@@ -282,41 +246,22 @@
       <div class="card-footer bg-white" *ngIf="resultadosPaginados.length > 0">
         <nav aria-label="Navegação de páginas">
           <ul class="pagination justify-content-center mb-0">
-            <!-- Botão Anterior -->
             <li class="page-item" [class.disabled]="paginaAtual === 1">
-              <button class="page-link" (click)="anterior()" [disabled]="paginaAtual === 1"
-                [class.text-muted]="paginaAtual === 1">
-                Anterior
-              </button>
+              <button class="page-link" (click)="anterior()" [disabled]="paginaAtual === 1">Anterior</button>
             </li>
-
-            <!-- Páginas -->
             <li class="page-item" *ngFor="let pagina of paginas" [class.active]="pagina === paginaAtual">
-              <button class="page-link" (click)="mudarPagina(pagina)">
-                {{ pagina }}
-              </button>
+              <button class="page-link" (click)="mudarPagina(pagina)">{{ pagina }}</button>
             </li>
-
-            <!-- Botão Próxima -->
             <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
-              <button class="page-link" (click)="proxima()" [disabled]="paginaAtual === totalPaginas"
-                [class.text-muted]="paginaAtual === totalPaginas">
-                Próxima
-              </button>
+              <button class="page-link" (click)="proxima()" [disabled]="paginaAtual === totalPaginas">Próxima</button>
             </li>
           </ul>
         </nav>
-
-        <!-- Informações da paginação -->
         <div class="text-center mt-2">
-          <small class="text-muted">
-            Página {{ paginaAtual }} de {{ totalPaginas }}
-          </small>
+          <small class="text-muted">Página {{ paginaAtual }} de {{ totalPaginas }}</small>
         </div>
       </div>
     </div>
-
-    <!--modal para visualização de dados adicionais-->
 
     <div class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);"
       *ngIf="resultadoParaVisualizacao">
@@ -334,15 +279,26 @@
           <div class="modal-body">
             <div class="row g-3">
 
+              <div class="col-12 text-center mb-3">
+                <h4 class="text-primary mb-0">{{ resultadoParaVisualizacao.amostra_codigo }}</h4>
+                <div class="text-muted small">ID do Resultado: {{ resultadoParaVisualizacao.id }}</div>
+              </div>
+
               <div class="col-md-6">
                 <label class="fw-bold text-secondary">Data da Coleta:</label>
-                <p class="fs-5">{{ resultadoParaVisualizacao.datacoleta | date:'dd/MM/yyyy' }}</p>
+                <p class="fs-5">{{ resultadoParaVisualizacao.datacoleta | date:'dd/MM/yyyy':'UTC' }}</p>
               </div>
 
               <div class="col-md-6">
                 <label class="fw-bold text-secondary">Data de Publicação:</label>
                 <p class="fs-5">{{ resultadoParaVisualizacao.datadapublicacao ?
                   (resultadoParaVisualizacao.datadapublicacao | date:'dd/MM/yyyy HH:mm') : 'Não publicado' }}</p>
+              </div>
+
+              <div class="col-md-6">
+                <label class="fw-bold text-secondary">Valor Medido:</label>
+                <p class="fs-5 fw-bold">{{ resultadoParaVisualizacao.valor_medido | number:'1.2-2' }} <small
+                    class="fw-normal text-muted">{{ resultadoParaVisualizacao.unidade_medida }}</small></p>
               </div>
 
               <div class="col-12">
@@ -353,7 +309,7 @@
                 <label class="fw-bold text-secondary">Matriz:</label>
                 <p class="mb-0">
                   <span class="badge bg-info text-dark" style="font-size: 0.9rem;">
-                    {{ resultadoParaVisualizacao.matriz }}
+                    {{ resultadoParaVisualizacao.matriz || resultadoParaVisualizacao.matriz_nome }}
                   </span>
                 </p>
               </div>
@@ -361,8 +317,9 @@
               <div class="col-12">
                 <label class="fw-bold text-secondary">Legislação:</label>
                 <div class="alert alert-light border mb-0">
-                  {{
-                  (resultadoParaVisualizacao.legislacao)
+                  {{ resultadoParaVisualizacao.legislacao ||
+                  (resultadoParaVisualizacao.legislacao_nome ? (resultadoParaVisualizacao.legislacao_nome + ' (' +
+                  resultadoParaVisualizacao.legislacao_sigla + ')') : '')
                   }}
                 </div>
               </div>
@@ -377,7 +334,6 @@
       </div>
     </div>
 
-    <!-- Loading -->
     <div *ngIf="loading" class="text-center py-4">
       <div class="spinner-border" role="status">
         <span class="sr-only"></span>
