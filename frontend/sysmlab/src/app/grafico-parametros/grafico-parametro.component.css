@@ -1,16 +1,21 @@
+/* ==============================
+   CONTAINER PRINCIPAL
+============================== */
 .grafico-container {
   background-color: #f8fafc;
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ==============================
+   HEADER (INALTERADO)
+============================== */
 .header {
   background-color: white;
   padding: 1rem 2rem;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
-  /* Responsividade básica para o header */
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -21,11 +26,10 @@
   gap: 10px;
 }
 
-/* --- ESTILO DO ÍCONE (NOVO) --- */
 .logo-icon {
   width: 3rem;
   height: 3rem;
-  background: #3b82f6; /* Azul da identidade visual */
+  background: #3b82f6;
   border-radius: 0.8rem;
   display: flex;
   justify-content: center;
@@ -37,7 +41,6 @@
   color: #fff;
   font-size: 1.5rem;
 }
-/* ----------------------------- */
 
 .logo-text {
   color: #3b82f6;
@@ -49,25 +52,99 @@
 .header-title {
   color: #1e293b;
   font-size: 1.75rem;
-  margin: 0;
+  margin: 0 auto;
   font-weight: 600;
-  /* Empurra o título para a direita em telas grandes */
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.chart-wrapper {
-  height: 450px;
+/* ==============================
+   ÁREA DO GRÁFICO (CENTRALIZAÇÃO)
+============================== */
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 12px 4px;
+}
+
+.chart-center {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
+/* ==============================
+   CARD
+============================== */
+.card {
+  width: 100%;
+  max-width: 2000px;
+  height: 600px;
+
+  margin-top: 50px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-body {
+  padding: 16px; /* padding interno mais enxuto */
+}
+
+/* ==============================
+   GRÁFICO
+============================== */
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  padding: 8px;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ==============================
+   CONTROLES (OPCIONAL)
+============================== */
+.spacing-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.spacing-controls button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.spacing-info {
+  font-size: 12px;
+  color: #6c757d;
+  margin-left: auto;
+}
+
+/* ==============================
+   RESPONSIVO
+============================== */
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
     justify-content: center;
   }
+
   .header-title {
-    margin: 0;
     font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .chart-wrapper {
+    height: 360px;
   }
 }

@@ -175,7 +175,7 @@ class AmostraModel {
         }
       }
       // ====================================================
-
+      
       console.error('Erro ao atualizar amostra:', error);
       await this.logOperation('UPDATE_ERROR', { id, error: error.message });
       throw error;

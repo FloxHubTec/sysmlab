@@ -6,14 +6,17 @@ class GraficoParametroModel {
   static async getDadosGrafico() {
     try {
       // Seleciona o nome e o valor de referência do parâmetro
-      // O DISTINCT garante que cada parâmetro apareça apenas uma vez no gráfico
+      // GROUP BY elimina duplicatas pelo nome do parâmetro
+      // MIN(p.valor_parametro) seleciona o menor valor em caso de duplicatas
       const query = `
-        SELECT DISTINCT
+        SELECT 
           p.nome as parametro,
-          p.valor_parametro
+          MIN(p.valor_parametro) as valor_parametro
         FROM parametro p
-        INNER JOIN resultado_analise ra ON ra.parametro_id = p.id
-        WHERE p.valor_parametro IS NOT NULL -- Traz apenas os que têm valor de referência definido
+        WHERE p.valor_parametro IS NOT NULL 
+          AND p.limite_minimo IS NOT NULL
+          AND p.limite_maximo IS NOT NULL
+        GROUP BY p.nome
         ORDER BY p.nome ASC
       `;
       

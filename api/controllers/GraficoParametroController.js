@@ -1,13 +1,10 @@
 // controllers/GraficoParametrosController.js
-
-// IMPORTANTE: Agora importamos o model específico
 const GraficoParametroModel = require('../models/GraficoParametroModel');
 
 class GraficoParametrosController {
-
   static async index(req, res) {
     try {
-      // Chama o método do novo model
+      // Chama o método do model ajustado
       const dados = await GraficoParametroModel.getDadosGrafico();
       
       return res.status(200).json({

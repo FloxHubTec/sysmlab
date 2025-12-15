@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// --- INTERFACES ---
+// --- INTERFACES CORRIGIDAS ---
 
 // Define o formato do dado unitário que vem do banco para o gráfico
+// CORREÇÃO: Alinhado com o backend real que retorna valor_parametro
 export interface DadosGrafico {
   parametro: string;
-  valor_medio: number | string; // Postgres as vezes retorna decimal como string
-  total_analises: number | string;
+  valor_parametro: number | string; // CORRIGIDO: valor_parametro (não valor_medio)
+  // total_analises REMOVIDO: não é retornado pelo backend atual
 }
 
 // Define o envelope padrão da sua API (success, data, message)
@@ -31,7 +32,7 @@ export class GraficoParametroService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Busca os dados agregados (Média por Parâmetro)
+   * Busca os dados para o gráfico de parâmetros
    * @returns Observable com a lista de dados para o gráfico
    */
   getDadosGrafico(): Observable<ApiResponse<DadosGrafico[]>> {

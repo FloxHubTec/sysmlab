@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DashboardWebService, DashboardResponse, ComplianceData } from './dashboard-web.service';
-import { catchError, finalize, timeout, retry, delay } from 'rxjs/operators';
-import { forkJoin, of, Subscription, throwError } from 'rxjs';
+import { catchError, finalize, timeout } from 'rxjs/operators';
+import { forkJoin, of, Subscription } from 'rxjs';
 
 // Interface para a resposta de filtros
 interface FilterOptionsResponse {
@@ -50,7 +50,7 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
   retryCount: number = 0;
   maxRetries: number = 3;
 
-  // Arrays para os selects
+  // Arrays para os selects - AGORA APENAS DO BANCO
   legislacoes: any[] = [];
   matrizes: any[] = [];
 
@@ -63,20 +63,6 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
 
   // Para controle de subscriptions
   private dataSubscription: Subscription | null = null;
-
-  // Matrizes conhecidas do banco
-  private todasMatrizesConhecidas = [
-    { id: 1, nome: 'Água Tratada (Consumo)' },
-    { id: 2, nome: 'Efluente Industrial' },
-    { id: 3, nome: 'Água Bruta' }
-  ];
-
-  // Legislações conhecidas do banco - CORRIGIDO: Agora com ID correto para INTERNO
-  private todasLegislacoesConhecidas = [
-    { id: 1, nome: 'Portaria GM/MS nº 888/2021', sigla: 'P888/2021' },
-    { id: 2, nome: 'Resolução CONAMA nº 357/2005 (Classes)', sigla: 'CONAMA 357' },
-    { id: 3, nome: 'Limites Internos (Padrão CAERN)', sigla: 'INTERNO' }
-  ];
 
   constructor(private dashboardService: DashboardWebService) { }
 
@@ -156,24 +142,32 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
         }
 
         // ==========================
-        // PROCESSAR FILTROS
+        // PROCESSAR FILTROS APENAS DO BANCO
         // ==========================
         if (results.filters?.success) {
           this.error = null; // Limpa o erro se filtros carregarem
-          this.matrizes = results.filters.matrizes;
-          this.legislacoes = results.filters.legislacoes;
+
+          // ✅ CARREGA MATRIZES APENAS DO BANCO
+          this.matrizes = this.ordenarMatrizes(results.filters.matrizes || []);
+
+          // ✅ CARREGA LEGISLAÇÕES APENAS DO BANCO
+          this.legislacoes = this.ordenarLegislacoes(results.filters.legislacoes || []);
 
           this.debugInfo.matrizesDoBanco = this.matrizes.length;
           this.debugInfo.legislacoesDoBanco = this.legislacoes.length;
+
+          console.log('✅ Matrizes carregadas do banco:', this.matrizes);
+          console.log('✅ Legislações carregadas do banco:', this.legislacoes);
         } else {
-          console.warn('⚠️ Usando filtros mínimos devido a erro.');
+          console.warn('⚠️ Falha ao carregar filtros do banco. Tentando extrair dos dados...');
           this.matrizes = [];
           this.legislacoes = [];
-          // Não define this.error aqui para não sobrepor a mensagem específica
-        }
 
-        this.completarMatrizesFaltantes();
-        this.completarLegislacoesFaltantes();
+          // Fallback: tenta extrair filtros dos dados se disponível
+          if (results.data?.success && results.data.data.length > 0) {
+            this.extractFilterOptionsFromData(results.data.data);
+          }
+        }
 
         // ==========================
         // PROCESSAR DADOS PRINCIPAIS
@@ -192,16 +186,14 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
         }
 
         // ==========================
-        // FINALIZAR CARREGAMENTO (SEGURO)
+        // FINALIZAR CARREGAMENTO
         // ==========================
         this.loading = false;
         this.loadingFilters = false;
         this.lastUpdated = new Date().toLocaleString('pt-BR');
 
-        // 🔚 Erro definitivo após retry - CORRIGIDO
-        // Só mostra erro geral se atingiu o máximo de tentativas E ainda há erro
+        // 🔚 Erro definitivo após retry
         if (this.retryCount >= this.maxRetries - 1 && (erroFiltros || erroDados)) {
-          // Mas não sobrescreve se já temos uma mensagem mais específica
           if (!this.error) {
             this.error = 'Não foi possível carregar os dados após várias tentativas.';
           }
@@ -209,6 +201,52 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Método para ordenar matrizes
+  private ordenarMatrizes(matrizes: any[]): any[] {
+    if (!matrizes.length) return [];
+
+    // Ordena por nome
+    return [...matrizes].sort((a, b) =>
+      (a.nome || '').localeCompare(b.nome || '')
+    );
+  }
+
+  // Método para ordenar legislações
+  private ordenarLegislacoes(legislacoes: any[]): any[] {
+    if (!legislacoes.length) return [];
+
+    // Separa em nacionais e internas
+    const legislacoesNacionais = legislacoes.filter(l => !this.eLegislacaoInterna(l));
+    const legislacoesInternas = legislacoes.filter(l => this.eLegislacaoInterna(l));
+
+    // Ordena cada grupo
+    legislacoesNacionais.sort((a, b) =>
+      (a.nome || a.sigla || '').localeCompare(b.nome || b.sigla || '')
+    );
+
+    legislacoesInternas.sort((a, b) =>
+      (a.nome || a.sigla || '').localeCompare(b.nome || b.sigla || '')
+    );
+
+    // Retorna nacionais primeiro, depois internas
+    return [...legislacoesNacionais, ...legislacoesInternas];
+  }
+
+  private eLegislacaoInterna(legislacao: any): boolean {
+    if (!legislacao) return false;
+
+    const sigla = legislacao.sigla?.toUpperCase() || '';
+    const nome = legislacao.nome?.toUpperCase() || '';
+
+    return (
+      sigla.includes('INTERNO') ||
+      nome.includes('INTERNO') ||
+      nome.includes('LIMITES INTERNOS') ||
+      nome.includes('PADRÃO INTERNO') ||
+      nome.includes('INTERNAL') ||
+      sigla === 'INTERNO'
+    );
+  }
 
   private getErrorMessage(error: any): string {
     if (error.name === 'TimeoutError') {
@@ -233,128 +271,61 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
     this.carregarTudoComRetry();
   }
 
-  completarMatrizesFaltantes() {
-    console.log('=== COMPLETANDO MATRIZES FALTANTES ===');
+  extractFilterOptionsFromData(data: ComplianceData[]) {
+    console.log('=== EXTRACTION DE FILTROS DOS DADOS ===');
 
-    // Verifica quantas matrizes temos
-    console.log(`Matrizes atuais: ${this.matrizes.length}`);
+    const matrizMap = new Map<number, any>();
+    const legMap = new Map<number, any>();
 
-    // Adiciona matrizes conhecidas que não estão na lista
-    let matrizesAdicionadas = 0;
+    data.forEach((item) => {
+      const itemAny = item as any;
 
-    this.todasMatrizesConhecidas.forEach(matrizConhecida => {
-      const jaExiste = this.matrizes.some(m => m.id === matrizConhecida.id || m.nome === matrizConhecida.nome);
+      // Para matrizes
+      if (itemAny.matriz_id !== undefined && itemAny.matriz_id !== null) {
+        const matrizId = itemAny.matriz_id;
+        const matrizNome = item.matriz_nome || `Matriz ${matrizId}`;
 
-      if (!jaExiste) {
-        console.log(`Adicionando matriz faltante: ${matrizConhecida.nome} (ID: ${matrizConhecida.id})`);
-        this.matrizes.push({
-          id: matrizConhecida.id,
-          nome: matrizConhecida.nome
-        });
-        matrizesAdicionadas++;
+        if (!matrizMap.has(matrizId)) {
+          matrizMap.set(matrizId, {
+            id: matrizId,
+            nome: matrizNome
+          });
+        }
       }
-    });
 
-    if (matrizesAdicionadas > 0) {
-      console.log(`✅ ${matrizesAdicionadas} matriz(es) adicionada(s)`);
-    }
+      // Para legislações
+      if (itemAny.legislacao_id !== undefined && itemAny.legislacao_id !== null) {
+        const legisId = itemAny.legislacao_id;
+        const sigla = item.legislacao_sigla || `LEG${legisId}`;
+        const nomeCompleto = itemAny.legislacao_nome || sigla;
 
-    // Ordena por nome
-    this.matrizes.sort((a, b) => a.nome.localeCompare(b.nome));
-
-    // Atualiza contagem
-    this.debugInfo.matrizesDoBanco = this.matrizes.length;
-    console.log('Matrizes após completar:', this.matrizes);
-  }
-
-  completarLegislacoesFaltantes() {
-    console.log('=== COMPLETANDO LEGISLAÇÕES FALTANTES ===');
-
-    // Verifica quantas legislações temos
-    console.log(`Legislações atuais: ${this.legislacoes.length}`);
-
-    // Adiciona legislações conhecidas que não estão na lista
-    let legislacoesAdicionadas = 0;
-
-    this.todasLegislacoesConhecidas.forEach(legislacaoConhecida => {
-      // Verifica por ID ou sigla
-      const jaExiste = this.legislacoes.some(l =>
-        l.id === legislacaoConhecida.id ||
-        l.sigla === legislacaoConhecida.sigla ||
-        l.nome === legislacaoConhecida.nome
-      );
-
-      if (!jaExiste) {
-        console.log(`Adicionando legislação faltante: ${legislacaoConhecida.nome} (Sigla: ${legislacaoConhecida.sigla})`);
-
-        // Remove duplicação no nome se existir
-        let nomeFormatado = legislacaoConhecida.nome;
-        if (legislacaoConhecida.sigla && nomeFormatado.includes(`(${legislacaoConhecida.sigla})`)) {
-          nomeFormatado = nomeFormatado.replace(` (${legislacaoConhecida.sigla})`, '').trim();
+        // Remove duplicação interna
+        let nomeFormatado = nomeCompleto;
+        if (sigla && nomeCompleto && nomeCompleto.includes(`(${sigla})`)) {
+          nomeFormatado = nomeCompleto.replace(` (${sigla})`, '').trim();
         }
 
-        this.legislacoes.push({
-          id: legislacaoConhecida.id,
-          nome: nomeFormatado,
-          sigla: legislacaoConhecida.sigla
-        });
-        legislacoesAdicionadas++;
+        if (!legMap.has(legisId)) {
+          legMap.set(legisId, {
+            id: legisId,
+            nome: nomeFormatado,
+            sigla: sigla
+          });
+        }
       }
     });
 
-    if (legislacoesAdicionadas > 0) {
-      console.log(`✅ ${legislacoesAdicionadas} legislação(ões) adicionada(s)`);
-    }
+    // Define os arrays ordenados APENAS COM DADOS DOS PARÂMETROS
+    this.matrizes = this.ordenarMatrizes(Array.from(matrizMap.values()));
+    this.legislacoes = this.ordenarLegislacoes(Array.from(legMap.values()));
 
-    // ORDENAÇÃO DINÂMICA SEM HARDCODING
-    this.ordenarLegislacoesDinamicamente();
-
-    // Atualiza contagem
+    // Atualiza debug info
+    this.debugInfo.matrizesDoBanco = this.matrizes.length;
     this.debugInfo.legislacoesDoBanco = this.legislacoes.length;
-    console.log('Legislações após completar:', this.legislacoes);
+
+    console.log('Matrizes extraídas dos parâmetros:', this.matrizes);
+    console.log('Legislações extraídas dos parâmetros:', this.legislacoes);
   }
-
-  ordenarLegislacoesDinamicamente() {
-    // Estratégia: Ordena por prioridade (nacionais primeiro, internos por último)
-
-    // 1. Separa as legislações em categorias
-    const legislaçõesNacionais = this.legislacoes.filter(l =>
-      !this.eLegislacaoInterna(l)
-    );
-
-    const legislaçõesInternas = this.legislacoes.filter(l =>
-      this.eLegislacaoInterna(l)
-    );
-
-    // 2. Ordena as nacionais alfabeticamente
-    legislaçõesNacionais.sort((a, b) =>
-      (a.nome || a.sigla || '').localeCompare(b.nome || b.sigla || '')
-    );
-
-    // 3. Ordena as internas alfabeticamente
-    legislaçõesInternas.sort((a, b) =>
-      (a.nome || a.sigla || '').localeCompare(b.nome || b.sigla || '')
-    );
-
-    // 4. Junta: nacionais primeiro, internas depois
-    this.legislacoes = [...legislaçõesNacionais, ...legislaçõesInternas];
-  }
-
-  eLegislacaoInterna(legislacao: any): boolean {
-    const sigla = legislacao.sigla?.toUpperCase() || '';
-    const nome = legislacao.nome?.toUpperCase() || '';
-
-    return (
-      sigla.includes('INTERNO') ||
-      nome.includes('INTERNO') ||
-      nome.includes('LIMITES INTERNOS') ||
-      nome.includes('PADRÃO INTERNO') ||
-      nome.includes('INTERNAL') ||
-      sigla === 'INTERNO'
-    );
-  }
-
-  // ... (restante dos métodos permanecem iguais, mantive todos os métodos originais abaixo)
 
   verificarConsistenciaDados() {
     console.log('=== VERIFICANDO CONSISTÊNCIA ===');
@@ -382,12 +353,6 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
 
     if (legislacoesSemParametros.length > 0) {
       console.warn('⚠️  Legislações sem parâmetros:', legislacoesSemParametros.map(l => l.nome));
-    }
-
-    // Se a legislação "INTERNO" não estiver nos parâmetros, explicar
-    const legislacaoInterno = this.legislacoes.find(l => l.sigla === 'INTERNO');
-    if (legislacaoInterno && !legislacaoIdsNosParametros.has(legislacaoInterno.id)) {
-      console.warn('ℹ️  A legislação "INTERNO" não tem parâmetros no momento, mas aparece nos filtros.');
     }
   }
 
@@ -518,61 +483,6 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
           this.parameters = [];
         }
       });
-  }
-
-  extractFilterOptionsFromData(data: ComplianceData[]) {
-    console.log('=== EXTRACTION DE FILTROS DOS DADOS ===');
-
-    const matrizMap = new Map<number, any>();
-    const legMap = new Map<number, any>();
-
-    data.forEach((item, index) => {
-      const itemAny = item as any;
-
-      // Para matrizes
-      if (itemAny.matriz_id !== undefined && itemAny.matriz_id !== null) {
-        const matrizId = itemAny.matriz_id;
-        const matrizNome = item.matriz_nome || `Matriz ${matrizId}`;
-
-        if (!matrizMap.has(matrizId)) {
-          matrizMap.set(matrizId, {
-            id: matrizId,
-            nome: matrizNome
-          });
-        }
-      }
-
-      // Para legislações
-      if (itemAny.legislacao_id !== undefined && itemAny.legislacao_id !== null) {
-        const legisId = itemAny.legislacao_id;
-        const sigla = item.legislacao_sigla || `LEG${legisId}`;
-        const nomeCompleto = itemAny.legislacao_nome || sigla;
-
-        // Remove duplicação interna
-        let nomeFormatado = nomeCompleto;
-        if (sigla && nomeCompleto && nomeCompleto.includes(`(${sigla})`)) {
-          nomeFormatado = nomeCompleto.replace(` (${sigla})`, '').trim();
-        }
-
-        if (!legMap.has(legisId)) {
-          legMap.set(legisId, {
-            id: legisId,
-            nome: nomeFormatado,
-            sigla: sigla
-          });
-        }
-      }
-    });
-
-    this.matrizes = Array.from(matrizMap.values());
-    this.legislacoes = Array.from(legMap.values());
-
-    console.log('Matrizes extraídas dos dados:', this.matrizes);
-    console.log('Legislações extraídas dos dados:', this.legislacoes);
-
-    // Completa com matrizes e legislações faltantes
-    this.completarMatrizesFaltantes();
-    this.completarLegislacoesFaltantes();
   }
 
   atualizarEstatisticas(stats: any) {
@@ -776,14 +686,5 @@ export class DashboardWebComponent implements OnInit, OnDestroy {
     console.log('=== DEBUG FILTROS ===');
     console.log('Total matrizes:', this.matrizes.length, this.matrizes);
     console.log('Total legislações:', this.legislacoes.length, this.legislacoes);
-
-    // Verificar se temos os 3 itens de cada
-    if (this.matrizes.length < 3) {
-      console.warn(`Faltam matrizes! Temos ${this.matrizes.length}, esperávamos 3.`);
-    }
-
-    if (this.legislacoes.length < 3) {
-      console.warn(`Faltam legislações! Temos ${this.legislacoes.length}, esperávamos 3.`);
-    }
   }
 }

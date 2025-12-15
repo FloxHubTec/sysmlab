@@ -14,6 +14,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #334155;
   min-height: 100vh;
+  padding-bottom: 10px;
 }
 
 .header {
@@ -25,6 +26,7 @@
   border-bottom: 2px solid #e5e7eb;
   position: relative;
   min-height: 80px;
+  background-color: #fff;
   /* Altura mínima garantida */
 }
 
@@ -46,16 +48,10 @@
 }
 
 .logo-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding-left: 1rem;
-  padding-top: 0;
-  z-index: 1;
-  /* Garante que fique acima do título */
-  position: relative;
-  background-color: transparent;
-  /* Fundo transparente */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
 }
 
 .logo-icon {
@@ -71,8 +67,8 @@
 }
 
 .logo-icon i {
-  color: #fff;
-  font-size: 1.5rem;
+    color: #fff;
+    font-size: 1.25rem;
 }
 
 .logo-text {

@@ -1,5 +1,6 @@
 // controllers/DashboardWebController.js
 const DashboardWebModel = require('../models/DashboardWebModel');
+const pool = require('../config/database'); // ADICIONE ESTA LINHA!
 
 /**
  * Helper para converter valores para número
@@ -249,8 +250,8 @@ const DashboardWebController = {
   },
 
   /**
- * Obtém TODAS as opções de filtro (matrizes e legislações)
- */
+   * Obtém TODAS as opções de filtro (matrizes e legislações)
+   */
   async getFilterOptions(req, res) {
     try {
       console.log('📡 Buscando TODAS as opções de filtro');
@@ -261,21 +262,15 @@ const DashboardWebController = {
 
       // Query para TODAS as legislações
       const legislacoesQuery = `
-      SELECT id, nome, sigla 
-      FROM legislacao 
-      ORDER BY 
-        CASE 
-          WHEN sigla = 'INTERNO' THEN 3
-          WHEN sigla = 'P888/2021' THEN 1
-          WHEN sigla = 'CONAMA 357' THEN 2
-          ELSE 4
-        END
-    `;
+        SELECT id, nome, sigla 
+        FROM legislacao 
+        ORDER BY nome
+      `;
       const legislacoesResult = await pool.query(legislacoesQuery);
 
       // Processa legislações para remover duplicação
       const legislacoesProcessadas = legislacoesResult.rows.map(leg => {
-        let nomeFormatado = leg.nome;
+        let nomeFormatado = leg.nome || '';
         const sigla = leg.sigla || '';
 
         // Remove duplicação (ex: "Resolução CONAMA nº 357/2005 (Classes) (CONAMA 357)")
@@ -285,15 +280,15 @@ const DashboardWebController = {
 
         return {
           id: leg.id,
-          nome: nomeFormatado,
-          sigla: sigla,
-          nomeOriginal: leg.nome
+          nome: nomeFormatado || sigla,
+          sigla: sigla
         };
       });
 
       console.log('✅ Matrizes encontradas:', matrizesResult.rows.length);
       console.log('✅ Legislações encontradas:', legislacoesResult.rows.length);
-      console.log('📋 Legislações:', legislacoesResult.rows.map(l => ({ id: l.id, nome: l.nome, sigla: l.sigla })));
+      console.log('📋 Matrizes:', matrizesResult.rows);
+      console.log('📋 Legislações:', legislacoesProcessadas);
 
       res.json({
         success: true,
@@ -308,7 +303,9 @@ const DashboardWebController = {
       res.status(500).json({
         success: false,
         message: 'Erro ao carregar opções de filtro',
-        error: error.message
+        error: error.message,
+        matrizes: [],
+        legislacoes: []
       });
     }
   }

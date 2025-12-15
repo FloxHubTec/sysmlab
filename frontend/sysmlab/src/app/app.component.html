@@ -1,5 +1,97 @@
-<router-outlet>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSmLab - Sistema de Laboratório</title>
+  </head>
+<body>
+    <!-- HEADER FIXO COM MENU -->
+    <header class="sysmlab-header">
+        <div class="header-container">
+            <!-- LOGO -->
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <h1 class="logo-text">SYSmLab</h1>
+            </div>
 
-</router-outlet>
+            <!-- MENU DE NAVEGAÇÃO -->
+            <nav class="menu-nav">
+                <a routerLink="/dashboard-web" routerLinkActive="active" class="menu-item">
+                    <i class="fa-brands fa-chrome"></i>
+                    <span class="menu-text">Dashboard Web</span>
+                </a>
+                <a routerLink="/dashboard-tv" routerLinkActive="active" class="menu-item">
+                    <i class="fa-solid fa-tv"></i>
+                    <span class="menu-text">Dashboard TV</span>
+                </a>
+                <a routerLink="/amostras" routerLinkActive="active" class="menu-item">
+                    <i class="fa-solid fa-vial"></i>
+                    <span class="menu-text">Amostras</span>
+                </a>
+                <a routerLink="/alertas" routerLinkActive="active" class="menu-item">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="menu-text">Alertas</span>
+                </a>
+                <a routerLink="/grafico-parametros" routerLinkActive="active" class="menu-item">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <span class="menu-text">Gráfico de parâmetros</span>
+                </a>
+                <a routerLink="/resultados-analise" routerLinkActive="active" class="menu-item">
+                    <i class="fa-solid fa-eye-dropper"></i>
+                    <span class="menu-text">Resultados das Análises</span>
+                </a>
 
 
+            </nav>
+
+            <!-- SEÇÃO DO USUÁRIO -->
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        LU
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">Luciana Delavec</span>
+                        <span class="user-email">lucianadelavec&#64;gmail.com</span>
+                    </div>
+                </div>
+
+                <a href="#" class="logout-btn" id="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTAINER PRINCIPAL - ONDE O ANGULAR CARREGARÁ OS COMPONENTES -->
+    <main class="main-container">
+        <div class="router-outlet">
+            <!-- CONTAINER DA PÁGINA ATUAL - ONDE O ROUTER-OUTLET VAI CARREGAR -->
+            <div class="page-container">
+                <!-- ÁREA DE CARREGAMENTO INICIAL -->
+                <div class="loading-area" *ngIf="isLoading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text"></div>
+                </div>
+
+                <!-- ROUTER OUTLET DO ANGULAR - AQUI VAI O CONTEÚDO DINÂMICO -->
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="sysmlab-footer">
+        <div class="footer-content">
+            <p>SYSmLab © 2024 - Sistema de Monitoramento Laboratorial</p>
+            <p class="version">Versão 2.1.0 | Todos os direitos reservados para Floxhub</p>
+        </div>
+    </footer>
+
+
+</body>
+</html>

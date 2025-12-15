@@ -6,6 +6,7 @@ import { AlertaNaoConformidadeComponent } from './alerta-naoconformidade/alerta-
 import { GraficoParametroComponent } from './grafico-parametros/grafico-parametro.component';
 import { DashboardTvComponent } from './dashboard-tv/dashboard-tv.component';
 import { ResultadoAnaliseComponent } from './resultado-analise/resultado-analise.component';
+import { AmostraComponent } from './amostra/amostra.component';
 
 export const routes: Routes = [
   // 1. Rota do Dashboard Web (NOVA PRINCIPAL)
@@ -35,6 +36,12 @@ export const routes: Routes = [
     component: ResultadoAnaliseComponent,
     title: 'Gerenciamento de Resultados'
   },
+  // 8. rota de amostras
+  {
+    path: 'amostras',
+    component: AmostraComponent,
+    title: 'Registro de Amostras'
+  },
 
   // 5. Rota TV
   {
@@ -56,5 +63,6 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: '/dashboard-web'
-  }
+  },
+
 ];

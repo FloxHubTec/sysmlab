@@ -1,13 +1,33 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { DashboardTvComponent } from './dashboard-tv/dashboard-tv.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [
+    CommonModule, // ← NECESSÁRIO para *ngIf
+    RouterOutlet,
+    RouterModule
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'sysmlab';
+  isLoading = true; // Começa como true para mostrar loading inicial
+
+  constructor() {
+    // Simula carregamento inicial
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1500);
+  }
+
+  logout() {
+    if (confirm('Tem certeza que deseja sair do sistema?')) {
+      console.log('Usuário desconectado');
+      // Aqui você implementaria o logout real
+      // window.location.href = '/login';
+    }
+  }
 }
