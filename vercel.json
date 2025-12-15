@@ -9,7 +9,7 @@
       "src": "frontend/sysmlab/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/sysmlab/browser"
+        "distDir": "dist/sysmlab"
       }
     }
   ],
