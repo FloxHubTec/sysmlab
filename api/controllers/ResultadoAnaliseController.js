@@ -1,4 +1,3 @@
-// controllers/ResultadoAnaliseController.js
 const ResultadoAnaliseModel = require('../models/ResultadoAnaliseModel');
 
 class ResultadoAnaliseController {
@@ -17,7 +16,7 @@ class ResultadoAnaliseController {
       });
 
     } catch (error) {
-      console.error('Erro no controller ao buscar resultados de análise:', error);
+      console.error('Erro no controller ao buscar resultados:', error);
       return res.status(500).json({
         success: false,
         message: 'Erro interno do servidor',
@@ -26,23 +25,27 @@ class ResultadoAnaliseController {
     }
   }
 
-  /**
-   * Cria um novo resultado de análise - COM VALIDAÇÃO DE MATRIZ
-   */
+
   static async create(req, res) {
     try {
       const {
         valor_medido,
         amostra_id,
         parametro_id,
-        datacoleta
+        datacoleta,
+        // ADICIONADO: Captura as seleções manuais
+        matriz_id_selecionada,
+        legislacao_id_selecionada
       } = req.body;
 
       const novoResultado = await ResultadoAnaliseModel.create({
         valor_medido,
         amostra_id,
         parametro_id,
-        datacoleta
+        datacoleta,
+        // ADICIONADO: Repassa para o Model
+        matriz_id_selecionada,
+        legislacao_id_selecionada
       });
 
       return res.status(201).json({
@@ -52,17 +55,7 @@ class ResultadoAnaliseController {
       });
 
     } catch (error) {
-      console.error('Erro no controller ao criar resultado de análise:', error);
-
-      // Tratamento específico para erro de consistência de matriz
-      if (error.message.includes('Inconsistência de matriz')) {
-        return res.status(422).json({ // 422 Unprocessable Entity
-          success: false,
-          message: error.message,
-          error: 'Erro de consistência de dados'
-        });
-      }
-
+      console.error('Erro Create Controller:', error);
       return res.status(400).json({
         success: false,
         message: error.message,
@@ -71,179 +64,42 @@ class ResultadoAnaliseController {
     }
   }
 
-  /**
-   * Busca amostras para dropdown
-   */
-  static async findAmostras(req, res) {
-    try {
-      const amostras = await ResultadoAnaliseModel.findAmostras();
 
-      return res.status(200).json({
-        success: true,
-        data: amostras,
-        count: amostras.length
-      });
-
-    } catch (error) {
-      console.error('Erro no controller ao buscar amostras:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor',
-        error: error.message
-      });
-    }
-  }
-
-  /**
-   * Busca parâmetros para dropdown
-   */
-  static async findParametros(req, res) {
-    try {
-      const parametros = await ResultadoAnaliseModel.findParametros();
-
-      return res.status(200).json({
-        success: true,
-        data: parametros,
-        count: parametros.length
-      });
-
-    } catch (error) {
-      console.error('Erro no controller ao buscar parâmetros:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor',
-        error: error.message
-      });
-    }
-  }
-
-  /**
-   * Busca matrizes para dropdown
-   */
-  static async findMatrizes(req, res) {
-    try {
-      const matrizes = await ResultadoAnaliseModel.findMatrizes();
-
-      return res.status(200).json({
-        success: true,
-        data: matrizes,
-        count: matrizes.length
-      });
-
-    } catch (error) {
-      console.error('Erro no controller ao buscar matrizes:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor',
-        error: error.message
-      });
-    }
-  }
-
-  /**
-   * Busca legislações para dropdown
-   */
-  static async findLegislacoes(req, res) {
-    try {
-      const legislacoes = await ResultadoAnaliseModel.findLegislacoes();
-
-      return res.status(200).json({
-        success: true,
-        data: legislacoes,
-        count: legislacoes.length
-      });
-
-    } catch (error) {
-      console.error('Erro no controller ao buscar legislações:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor',
-        error: error.message
-      });
-    }
-  }
-
-  /**
-   * Busca um resultado por ID
-   */
-  static async findById(req, res) {
-    try {
-      const { id } = req.params;
-      const resultado = await ResultadoAnaliseModel.findById(id);
-
-      if (!resultado) {
-        return res.status(404).json({
-          success: false,
-          message: 'Resultado de análise não encontrado'
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        data: resultado
-      });
-
-    } catch (error) {
-      console.error('Erro no controller ao buscar resultado de análise:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor',
-        error: error.message
-      });
-    }
-  }
-
-  /**
-   * Atualiza um resultado de análise - COM VALIDAÇÃO DE MATRIZ
-   */
   static async update(req, res) {
     try {
       const { id } = req.params;
-
-      // 1. AQUI ESTAVA O BLOQUEIO: Adicionamos os campos novos na extração
       const {
         valor_medido,
         amostra_id,
         parametro_id,
         datacoleta,
-        matriz_id_selecionada,      // <--- NOVO: Pega o ID da matriz manual
-        legislacao_id_selecionada   // <--- NOVO: Pega o ID da legislação manual
+        // ADICIONADO: Captura as seleções manuais
+        matriz_id_selecionada,
+        legislacao_id_selecionada
       } = req.body;
 
-      // 2. Passamos os campos novos para o Model
       const resultadoAtualizado = await ResultadoAnaliseModel.update(id, {
         valor_medido,
         amostra_id,
         parametro_id,
         datacoleta,
-        matriz_id_selecionada,      // <--- Envia para o Model processar
-        legislacao_id_selecionada   // <--- Envia para o Model processar
+        // ADICIONADO: Repassa para o Model
+        matriz_id_selecionada,
+        legislacao_id_selecionada
       });
 
       if (!resultadoAtualizado) {
-        return res.status(404).json({
-          success: false,
-          message: 'Resultado de análise não encontrado'
-        });
+        return res.status(404).json({ success: false, message: 'Não encontrado' });
       }
 
       return res.status(200).json({
         success: true,
-        message: 'Resultado de análise atualizado com sucesso',
+        message: 'Resultado atualizado com sucesso',
         data: resultadoAtualizado
       });
 
     } catch (error) {
-      console.error('Erro no controller ao atualizar resultado de análise:', error);
-
-      if (error.message.includes('Inconsistência de matriz')) {
-        return res.status(422).json({
-          success: false,
-          message: error.message,
-          error: 'Erro de consistência de dados'
-        });
-      }
-
+      console.error('Erro Update Controller:', error);
       return res.status(400).json({
         success: false,
         message: error.message,
@@ -273,12 +129,61 @@ class ResultadoAnaliseController {
       });
 
     } catch (error) {
-      console.error('Erro no controller ao excluir resultado de análise:', error);
+      console.error('Erro no controller ao excluir resultado:', error);
       return res.status(500).json({
         success: false,
         message: 'Erro interno do servidor',
         error: error.message
       });
+    }
+  }
+
+  // --- MÉTODOS AUXILIARES (Dropdowns) ---
+
+  static async findAmostras(req, res) {
+    try {
+      const data = await ResultadoAnaliseModel.findAmostras();
+      return res.status(200).json({ success: true, data, count: data.length });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Erro ao buscar amostras', error: error.message });
+    }
+  }
+
+  static async findParametros(req, res) {
+    try {
+      const data = await ResultadoAnaliseModel.findParametros();
+      return res.status(200).json({ success: true, data, count: data.length });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Erro ao buscar parâmetros', error: error.message });
+    }
+  }
+
+  static async findMatrizes(req, res) {
+    try {
+      const data = await ResultadoAnaliseModel.findMatrizes();
+      return res.status(200).json({ success: true, data, count: data.length });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Erro ao buscar matrizes', error: error.message });
+    }
+  }
+
+  static async findLegislacoes(req, res) {
+    try {
+      const data = await ResultadoAnaliseModel.findLegislacoes();
+      return res.status(200).json({ success: true, data, count: data.length });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Erro ao buscar legislações', error: error.message });
+    }
+  }
+
+  static async findById(req, res) {
+    try {
+      const { id } = req.params;
+      const resultado = await ResultadoAnaliseModel.findById(id);
+      if (!resultado) return res.status(404).json({ success: false, message: 'Não encontrado' });
+      return res.status(200).json({ success: true, data: resultado });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: 'Erro interno', error: error.message });
     }
   }
 }

@@ -3,6 +3,11 @@ const dotenv = require('dotenv');
 const cors = require('cors'); 
 const parametroRoutes = require('./routes/ParametroRoutes');
 const resultadoAnaliseRoutes = require('./routes/ResultadoAnaliseRoutes'); 
+const graficoParametrosRoutes = require('./routes/GraficoParametroRoutes');
+const alertasRoutes = require('./routes/AlertaRoutes');
+const dashboardWebRoutes = require('./routes/DashboardWebRoutes');
+const amostraRoutes = require('./routes/AmostraRoutes');
+
 const app = express();
 
 // Carrega variáveis de ambiente do arquivo .env
@@ -19,6 +24,11 @@ app.use(cors());
 // Rotas
 app.use('/dashboardtv', parametroRoutes);
 app.use('/resultados-analise', resultadoAnaliseRoutes); 
+app.use('/grafico-parametros', graficoParametrosRoutes);
+app.use('/alertas', alertasRoutes);
+app.use('/dashboard-web', dashboardWebRoutes);
+app.use('/amostras', amostraRoutes);
+
 
 // Rota 404 - Para endpoints não encontrados
 app.use('*', (req, res) => {
