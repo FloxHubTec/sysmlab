@@ -19,11 +19,15 @@
       "dest": "/api/index.js"
     },
     {
+      "src": "/(.*)",
+      "dest": "/frontend/sysmlab/$1"
+    },
+    {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/frontend/sysmlab/index.html"
     }
   ]
 }
