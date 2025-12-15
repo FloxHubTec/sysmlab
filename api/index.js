@@ -1,60 +1,64 @@
+// ================================
+// IMPORTS
+// ================================
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors'); 
+const cors = require('cors');
+
+// Middlewares
+const authMiddleware = require('./middleware/Auth');
+const roleMiddleware = require('./middleware/RoleMiddleware');
+const roleFromTable = require("./middleware/RoleFromTable");
+
+// Rotas já existentes
 const parametroRoutes = require('./routes/ParametroRoutes');
-const resultadoAnaliseRoutes = require('./routes/ResultadoAnaliseRoutes'); 
-const graficoParametrosRoutes = require('./routes/GraficoParametroRoutes');
+const resultadoAnaliseRoutes = require('./routes/ResultadoAnaliseRoutes');
+const graficoParametroRoutes = require('./routes/GraficoParametroRoutes');
 const alertasRoutes = require('./routes/AlertaRoutes');
 const dashboardWebRoutes = require('./routes/DashboardWebRoutes');
 const amostraRoutes = require('./routes/AmostraRoutes');
+const usuariosRoutes = require("./routes/UsuarioRoutes");
 
-const app = express();
+// NOVAS ROTAS
+const legislacaoRoutes = require('./routes/LegislacaoRoutes');
+const matrizRoutes = require('./routes/MatrizRoutes');
 
-// Carrega variáveis de ambiente do arquivo .env
 dotenv.config();
 
-// Configurações
-const PORT = process.env.PORT || 3000; 
-const ENV = process.env.NODE_ENV || 'development';
-
-// Middleware
+const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Rotas
-app.use('/dashboardtv', parametroRoutes);
-app.use('/resultados-analise', resultadoAnaliseRoutes); 
-app.use('/grafico-parametros', graficoParametrosRoutes);
-app.use('/alertas', alertasRoutes);
-app.use('/dashboard-web', dashboardWebRoutes);
-app.use('/amostras', amostraRoutes);
+// ================================
+// ROTAS PROTEGIDAS PELO SUPABASE
+// ================================
+app.use('/parametros', authMiddleware, parametroRoutes);
+app.use('/matrizes', authMiddleware, matrizRoutes);
+app.use('/legislacoes', authMiddleware, legislacaoRoutes);
+
+app.use('/dashboardtv', authMiddleware, parametroRoutes);
+app.use('/resultados-analise', authMiddleware, resultadoAnaliseRoutes);
+app.use('/grafico-parametros', authMiddleware, graficoParametroRoutes);
+app.use('/dashboard-web', authMiddleware, dashboardWebRoutes);
+app.use('/amostras', authMiddleware, amostraRoutes);
+
+app.use(
+  "/usuarios",
+  authMiddleware,
+  roleFromTable("Gestor"), // 🔐 vem da tabela
+  usuariosRoutes
+);
+
+app.use('/alertas', authMiddleware, roleFromTable("Gestor"), alertasRoutes);
 
 
-// Rota 404 - Para endpoints não encontrados
+// 404
 app.use('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        error: 'Endpoint não encontrado',
-        path: req.originalUrl        
-    });
+  res.status(404).json({
+    success: false,
+    error: "Endpoint não encontrado",
+    path: req.originalUrl
+  });
 });
 
-// Middleware de erro global
-app.use((error, req, res, next) => {
-    console.error('Erro global não tratado:', error);
-    res.status(500).json({
-        success: false,
-        error: 'Erro interno do servidor',
-        ...(ENV === 'development' && { detail: error.message })
-    });
-});
-
-// Inicializar servidor
-app.listen(PORT, () => {
-    console.log(`Servidor CAERN iniciado com sucesso!`);
-    console.log(`URL: http://localhost:${PORT}`);
-    console.log(`Ambiente: ${ENV}`);  
-});
-
-// Exporta apenas o app (não precisa mais exportar pool)
-module.exports = app;
+app.listen(3000, () => console.log("Servidor iniciado na porta 3000"));

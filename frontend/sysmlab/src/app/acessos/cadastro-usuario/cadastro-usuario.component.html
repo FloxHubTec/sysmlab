@@ -1,0 +1,79 @@
+<div class="login-page">
+  <div class="login-wrapper">
+    <div class="logo-block">
+      <div class="logo-icon">
+        <i class="fa-solid fa-flask"></i>
+      </div>
+      <h1 class="logo-title">SYSmLab</h1>
+      <p class="logo-subtitle">
+        Sistema de Monitoramento inteligente para Laboratorios Ambientais
+      </p>
+    </div>
+
+    <div class="login-card">
+      <header class="card-header">
+        <h2 class="card-title">Cadastrar Usuário</h2>
+        <p class="card-description">Somente administradores</p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+        <div class="field">
+          <label>Nome</label>
+          <input type="text" formControlName="nome" />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" formControlName="email" />
+        </div>
+
+        <div class="field">
+          <label>Telefone</label>
+          <input
+          type="text"
+          formControlName="telefone"
+          (input)="mascaraTelefone($event)"
+          placeholder="(99) 99999-9999"
+        />
+        </div>
+
+        <div class="field">
+          <label>Perfil</label>
+          <select formControlName="perfil" required>
+            <option value="" disabled selected>Selecione um perfil</option>
+            <option value="admin">Administrador</option>
+            <option value="usuario">Usuário</option>
+            <option value="analista">Analista</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" formControlName="senha" />
+          <small
+            class="erro"
+            *ngIf="
+              form.get('senha')?.hasError('minlength') &&
+              form.get('senha')?.touched
+            "
+          >
+            A senha deve ter no mínimo 8 caracteres
+          </small>
+        </div>
+
+        <div class="field">
+          <label>Confirmar Senha</label>
+          <input type="password" formControlName="confirmarSenha" />
+        </div>
+
+        <button
+          class="submit-button"
+          type="submit"
+          [disabled]="form.invalid || loading"
+        >
+          Cadastrar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
