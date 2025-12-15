@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { getSupabaseClient } from './supabase.client';
 
 @Injectable({
@@ -11,10 +12,14 @@ export class AuthService {
   private sessionCache: any = null;
   private loadingSession: Promise<any> | null = null;
 
+  private authState = new BehaviorSubject<boolean>(false);
+  public isLoggedIn$ = this.authState.asObservable();
+
   constructor() {
     // mantém cache sempre atualizado
     this.supabase.auth.onAuthStateChange((_event, session) => {
       this.sessionCache = session;
+      this.authState.next(!!session);
     });
   }
 
@@ -48,7 +53,7 @@ export class AuthService {
   /**
    * Usado APENAS depois que o guard já rodou
    */
-  getSessionSync() {
+  getSessionSync(): any {
     return this.sessionCache;
   }
 
@@ -114,10 +119,10 @@ export class AuthService {
 
   // ---------------------- SET SESSION (RESET SENHA) ----------------------
 
-  async setSessionFromToken(accessToken: string) {
+  async setSessionFromToken(accessToken: string, refreshToken: string) {
     const { data, error } = await this.supabase.auth.setSession({
       access_token: accessToken,
-      refresh_token: ''
+      refresh_token: refreshToken
     });
 
     if (error) throw error;

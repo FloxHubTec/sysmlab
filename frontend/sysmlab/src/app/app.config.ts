@@ -27,6 +27,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([
         (req, next) => {
+          // Evita loop infinito ignorando requisições de autenticação
+          if (req.url.includes('/auth') || req.url.includes('/token') || req.url.includes('/session')) {
+            return next(req);
+          }
+
           const injector = inject(AuthService);
           return from(injector.getSession()).pipe(
             switchMap(session => {

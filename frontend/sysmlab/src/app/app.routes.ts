@@ -46,6 +46,7 @@ export const routes: Routes = [
   {
     path: 'amostras',
     component: AmostraComponent,
+    canActivate: [authGuard],
     title: 'Registro de Amostras'
   },
 
@@ -84,6 +85,6 @@ export const routes: Routes = [
   },
   { path: 'nova-senha', component: NovaSenhaComponent },
   { path: 'acesso-negado', component: AcessoNegadoComponent },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' },
+  { path: '', redirectTo: 'dashboard-web', pathMatch: 'full' },
+  { path: '**', redirectTo: 'dashboard-web' },
 ];

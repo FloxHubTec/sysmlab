@@ -17,6 +17,7 @@ export class NovaSenhaComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
   accessToken = '';
+  refreshToken = '';
 
   constructor(
     private fb: FormBuilder,
@@ -41,10 +42,11 @@ export class NovaSenhaComponent implements OnInit {
     const params = new URLSearchParams(hash);
 
     this.accessToken = params.get('access_token') || '';
+    this.refreshToken = params.get('refresh_token') || '';
 
-    if (this.accessToken) {
+    if (this.accessToken && this.refreshToken) {
       // Ativa a sessão no Supabase usando o token
-      this.authService.setSessionFromToken(this.accessToken)
+      this.authService.setSessionFromToken(this.accessToken, this.refreshToken)
         .catch(() => {
           this.errorMessage = 'Token inválido ou expirado. Solicite outro email.';
         });
