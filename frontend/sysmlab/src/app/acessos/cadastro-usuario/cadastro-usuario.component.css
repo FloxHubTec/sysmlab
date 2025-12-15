@@ -1,0 +1,273 @@
+/* login.component.css */
+
+.login-page {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+/* BLOCO DO LOGO */
+
+.logo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1.25rem;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.75rem;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
+}
+
+.logo-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.03em;
+}
+
+.logo-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* CARD DE LOGIN */
+
+.login-card {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 1.1rem;
+  padding: 2.25rem 2rem 2.5rem;
+  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.18);
+}
+
+/* CABEÇALHO DO CARD */
+
+.card-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.35rem;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* ABAS ENTRAR / CADASTRAR */
+
+.tabs {
+  display: flex;
+  gap: 0.375rem;
+  background-color: #f3f4f6;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  flex: 1;
+  border: none;
+  border-radius: 0.55rem;
+  background: transparent;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease,
+    box-shadow 0.18s ease, transform 0.12s ease;
+}
+
+.tab:hover {
+  background-color: rgba(209, 213, 219, 0.6);
+}
+
+.tab.active {
+  background-color: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.18);
+}
+
+/* FORMULÁRIO */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.field input {
+  width: 100%;
+  border-radius: 0.6rem;
+  border: 1px solid #d1d5db;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  color: #111827;
+  background-color: #ffffff;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.field input::placeholder {
+  color: #9ca3af;
+}
+
+.field input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+/* BOTÃO SUBMIT */
+
+.submit-button {
+  margin-top: 0.75rem;
+  width: 100%;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2563eb;
+  cursor: pointer;
+  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.45);
+  transition: background-color 0.15s ease, transform 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(37, 99, 235, 0.55);
+}
+
+.submit-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+}
+
+.submit-button:disabled {
+  background-color: #9ca3af;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 480px) {
+  .login-wrapper {
+    max-width: 100%;
+  }
+
+  .login-card {
+    padding: 1.75rem 1.25rem 2rem;
+  }
+
+  .logo-title {
+    font-size: 1.35rem;
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+  }
+}
+
+
+/* Link "Esqueci minha senha" */
+.forgot-password {
+  font-size: 0.85rem;
+  color: #2563eb;
+  cursor: pointer;
+  text-align: right;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  width: 100%;
+  transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+  color: #3b82f6; /* azul mais claro */
+  text-decoration: underline;
+}
+
+.logo-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center; /* ADICIONE ISSO */
+}
+
+/* SELECT (perfil) com o mesmo estilo dos inputs */
+.field select {
+  width: 100%;
+  border-radius: 0.6rem;
+  border: 1px solid #d1d5db;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  color: #111827;
+  background-color: #ffffff;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+/* Placeholder do select (primeira opção desabilitada) */
+.field select:invalid {
+  color: #9ca3af;
+}
+
+/* Focus igual ao input */
+.field select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+.erro {
+  color: #dc2626;
+  font-size: 0.75rem;
+}

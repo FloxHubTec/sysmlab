@@ -1,0 +1,60 @@
+<div class="login-page">
+  <div class="login-wrapper">
+    <div class="logo-block">
+      <div class="logo-icon">
+        <i class="fa-solid fa-flask"></i>
+      </div>
+      <h1 class="logo-title">SYSmLab</h1>
+      <p class="logo-subtitle">
+        Sistema de Monitoramento inteligente para Laboratorios Ambientais
+      </p>
+    </div>
+
+    <div class="login-card">
+      <header class="card-header">
+        <h2 class="card-title">Acesso ao Sistema</h2>
+        <p class="card-description">
+          Entre com suas credenciais para continuar
+        </p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+        <div class="field">
+          <div *ngIf="loginErro" class="alerta-erro">
+  {{ loginErro }}
+</div>
+
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="seu@email.com"
+          />
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha</label>
+          <input
+            id="senha"
+            type="password"
+            formControlName="senha"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <button
+          class="submit-button"
+          type="submit"
+          [disabled]="loading || form.invalid"
+        >
+          Entrar
+        </button>
+
+        <a class="forgot-password" (click)="goToForgotPassword()">
+          Esqueci minha senha
+        </a>
+      </form>
+    </div>
+  </div>
+</div>

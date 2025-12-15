@@ -1,4 +1,4 @@
-// routes/graficoParametrosRoutes.js
+// routes/graficoParametroRoutes.js
 const express = require('express');
 const router = express.Router();
 const GraficoParametrosController = require('../controllers/GraficoParametroController');

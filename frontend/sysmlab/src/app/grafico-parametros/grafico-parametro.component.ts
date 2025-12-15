@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { GraficoParametroService, DadosGrafico } from './grafico-parametro.service';
@@ -8,9 +8,7 @@ import { GraficoParametroService, DadosGrafico } from './grafico-parametro.servi
   selector: 'app-grafico-parametros',
   standalone: true,
   imports: [CommonModule, BaseChartDirective],
-  providers: [
-    provideCharts(withDefaultRegisterables())
-  ],
+  providers: [provideCharts(withDefaultRegisterables()),],
   templateUrl: './grafico-parametro.component.html',
   styleUrls: ['./grafico-parametro.component.css']
 })
@@ -25,8 +23,8 @@ export class GraficoParametroComponent implements OnInit {
       },
       title: {
         display: true,
-        text: 'Valor dos Parâmetros',
-        font: { size: 14 }
+        text: 'Valores dos Parâmetros',
+        font: { size: 16 }
       },
       tooltip: {
         backgroundColor: 'rgba(30, 41, 59, 0.9)',

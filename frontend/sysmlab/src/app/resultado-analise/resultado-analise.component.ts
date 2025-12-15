@@ -385,3 +385,4 @@ export class ResultadoAnaliseComponent implements OnInit {
   getRangeFim() { const f = this.paginaAtual * this.itensPorPagina; return f > this.totalItens ? this.totalItens : f; }
   atualizarTabela() { this.loadData(); }
 }
+
