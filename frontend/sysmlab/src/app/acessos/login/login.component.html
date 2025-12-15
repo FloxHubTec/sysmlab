@@ -20,6 +20,10 @@
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
         <div class="field">
+          <div *ngIf="loginErro" class="alerta-erro">
+  {{ loginErro }}
+</div>
+
           <label for="email">Email</label>
           <input
             id="email"

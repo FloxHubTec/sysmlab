@@ -9,6 +9,7 @@ const ParametroController = require('../controllers/ParametroController');
  * @access Public
  */
 router.get('/', ParametroController.findAll);
+router.put('/:id', ParametroController.update);
 
 /**
  * @route GET /dashboardtv/resumo

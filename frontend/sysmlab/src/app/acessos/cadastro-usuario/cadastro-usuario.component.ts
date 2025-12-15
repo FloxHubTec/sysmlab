@@ -65,23 +65,28 @@ export class CadastroUsuarioComponent {
 }
 
 
-  onSubmit(): void {
-    if (this.form.invalid) return;
+ onSubmit(): void {
+  if (this.form.invalid) return;
 
-    this.loading = true;
+  this.loading = true;
 
-    const { confirmarSenha, ...payload } = this.form.value;
+  const { nome, email, telefone, perfil, senha } = this.form.value;
 
-    this.authService.register(payload).subscribe({
-      next: () => {
-        this.loading = false;
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.loading = false;
+  this.authService.register(email, senha, perfil, nome, telefone)
+    .then(res => {
+      this.loading = false;
+
+      if (res.error) {
+        console.error(res.error);
+        return;
       }
-    });
 
-  }
+      this.router.navigate(['/']);
+    })
+    .catch(err => {
+      console.error(err);
+      this.loading = false;
+    });
+}
+
 }

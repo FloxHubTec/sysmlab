@@ -9,7 +9,6 @@ import {
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -20,6 +19,7 @@ import { AuthService } from '../auth/auth.service';
 export class LoginComponent {
   form: FormGroup;
   loading = false;
+  loginErro: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -32,24 +32,39 @@ export class LoginComponent {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit() {
     if (this.form.invalid) return;
 
     this.loading = true;
+    this.loginErro = null;
 
     const { email, senha } = this.form.value;
 
-    this.authService.login({ email, senha }).subscribe({
-      next: (res) => {
-        this.authService.saveSession(res);
+    try {
+      const res = await this.authService.login(email, senha);
+
+      if (res.error) {
+        if (res.error.message.includes('Invalid login credentials')) {
+          this.loginErro = "Email ou senha incorretos.";
+        } else {
+          this.loginErro = "Erro ao fazer login.";
+        }
         this.loading = false;
-        this.router.navigateByUrl('/resultados-analise');
-      },
-      error: (err) => {
-        console.error('Erro no login', err);
-        this.loading = false;
+        return;
       }
-    });
+
+      // ⚠️ ESSENCIAL: garantir que sessão foi carregada
+      await this.authService.getSession();
+
+      // agora sim pode navegar
+      this.router.navigateByUrl('/dashboard-web');
+
+    } catch (err) {
+      console.error('Erro no login', err);
+      this.loginErro = "Erro inesperado. Tente novamente.";
+    }
+
+    this.loading = false;
   }
 
   goToForgotPassword(): void {

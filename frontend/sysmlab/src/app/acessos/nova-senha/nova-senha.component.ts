@@ -36,10 +36,19 @@ export class NovaSenhaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const hash = window.location.hash;
-    const params = new URLSearchParams(hash.replace('#', ''));
+    // Pega o token vindo no hash da URL
+    const hash = window.location.hash.replace('#', '');
+    const params = new URLSearchParams(hash);
+
     this.accessToken = params.get('access_token') || '';
 
+    if (this.accessToken) {
+      // Ativa a sessão no Supabase usando o token
+      this.authService.setSessionFromToken(this.accessToken)
+        .catch(() => {
+          this.errorMessage = 'Token inválido ou expirado. Solicite outro email.';
+        });
+    }
   }
 
   senhasIguaisValidator(group: AbstractControl): ValidationErrors | null {
@@ -50,7 +59,7 @@ export class NovaSenhaComponent implements OnInit {
   }
 
   async onSubmit() {
-    if (this.form.invalid || !this.accessToken) {
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }

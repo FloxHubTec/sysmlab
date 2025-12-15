@@ -2,15 +2,15 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
 
-export const authGuard: CanActivateFn = async () => {
+export const redirectGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
   const session = await auth.getSession();
 
-  if (!session?.user) {
-    return router.createUrlTree(['/login']);
+  if (session?.user) {
+    return router.createUrlTree(['/dashboard-web']);
   }
 
-  return true;
+  return router.createUrlTree(['/login']);
 };

@@ -1,65 +1,110 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { AuthResponse, LoginPayload, RegisterPayload, Usuario } from '../models/user.model';
+import { getSupabaseClient } from './supabase.client';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly baseUrl = 'http://localhost:3000';
-  private readonly TOKEN_KEY = 'sysmlab_token';
-  private readonly USER_KEY = 'sysmlab_user';
+  private supabase = getSupabaseClient();
 
-  private supabase: SupabaseClient;
+  private sessionCache: any = null;
+  private loadingSession: Promise<any> | null = null;
 
-  constructor(private http: HttpClient) {
-    this.supabase = createClient(
-      'https://exxufmvzgnbjmaexzmuz.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4eHVmbXZ6Z25iam1hZXh6bXV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NDgzMTgsImV4cCI6MjA3NzMyNDMxOH0.R1lsXHhItc4LMLXSSUNYyfl4rt9J1RmLcgVHt1MgeUA'
-    );
+  constructor() {
+    // mantém cache sempre atualizado
+    this.supabase.auth.onAuthStateChange((_event, session) => {
+      this.sessionCache = session;
+    });
   }
 
-  // ----------------------------
-  // AUTENTICAÇÃO VIA BACKEND
-  // ----------------------------
+  // ---------------------- SESSÃO ----------------------
 
-  login(payload: LoginPayload): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, payload);
+  /**
+   * 🔒 ÚNICA forma correta de buscar sessão no Supabase
+   * Evita NavigatorLockAcquireTimeoutError
+   */
+  async getSession(): Promise<any> {
+    if (this.sessionCache) {
+      return this.sessionCache;
+    }
+
+    if (!this.loadingSession) {
+      this.loadingSession = this.supabase.auth
+        .getSession()
+        .then(({ data }) => {
+          this.sessionCache = data.session;
+          return data.session;
+        })
+        .catch(() => null)
+        .finally(() => {
+          this.loadingSession = null;
+        });
+    }
+
+    return this.loadingSession;
   }
 
-  register(payload: RegisterPayload): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/cadastro-usuario`, payload);
+  /**
+   * Usado APENAS depois que o guard já rodou
+   */
+  getSessionSync() {
+    return this.sessionCache;
   }
 
-  saveSession(response: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, response.token);
-    localStorage.setItem(this.USER_KEY, JSON.stringify(response.usuario));
+  /**
+   * Mantido por compatibilidade
+   * (não chama Supabase de novo)
+   */
+  async loadInitialSessionBlocking() {
+    return await this.getSession();
   }
 
-  logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+  getAccessToken(): string | null {
+    return this.sessionCache?.access_token ?? null;
   }
 
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY);
+  // ---------------------- LOGIN ----------------------
+
+  async login(email: string, senha: string) {
+    const result = await this.supabase.auth.signInWithPassword({
+      email,
+      password: senha
+    });
+
+    if (result.data.session) {
+      this.sessionCache = result.data.session;
+    }
+
+    return result;
   }
 
-  // ----------------------------
-  // PEGAR USUÁRIO LOGADO
-  // ----------------------------
+  // ---------------------- REGISTRO ----------------------
 
-  getCurrentUser(): Usuario | null {
-    const stored = localStorage.getItem(this.USER_KEY);
-    return stored ? JSON.parse(stored) as Usuario : null;
+  async register(
+    email: string,
+    senha: string,
+    perfil: string,
+    nome: string,
+    telefone: string
+  ) {
+    return await this.supabase.auth.signUp({
+      email,
+      password: senha,
+      options: {
+        data: { perfil, nome, telefone }
+      }
+    });
   }
 
-  // ----------------------------
-  // SUPABASE – RESET DE SENHA
-  // ----------------------------
+  // ---------------------- LOGOUT ----------------------
+
+  async logout() {
+    await this.supabase.auth.signOut();
+    this.sessionCache = null;
+  }
+
+  // ---------------------- RESET DE SENHA ----------------------
 
   async requestPasswordReset(email: string) {
     return await this.supabase.auth.resetPasswordForEmail(email, {
@@ -67,9 +112,28 @@ export class AuthService {
     });
   }
 
-  async updatePassword(novaSenha: string) {
-    return await this.supabase.auth.updateUser({
-      password: novaSenha
+  // ---------------------- SET SESSION (RESET SENHA) ----------------------
+
+  async setSessionFromToken(accessToken: string) {
+    const { data, error } = await this.supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: ''
     });
+
+    if (error) throw error;
+
+    this.sessionCache = data.session;
+    return data.session;
+  }
+
+  // ---------------------- UPDATE PASSWORD ----------------------
+
+  async updatePassword(newPassword: string) {
+    const { data, error } = await this.supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) throw error;
+    return data;
   }
 }

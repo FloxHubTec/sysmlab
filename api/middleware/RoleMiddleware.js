@@ -1,11 +1,12 @@
-module.exports = function roleMiddleware(...rolesPermitidos) {
+module.exports = function roleMiddleware(...roles) {
   return (req, res, next) => {
+    const perfil = req.user?.user_metadata?.perfil;
 
-    if (!req.user) {
-      return res.status(401).json({ erro: "Usuário não autenticado" });
+    if (!perfil) {
+      return res.status(403).json({ erro: "Perfil não encontrado" });
     }
 
-    if (!rolesPermitidos.includes(req.user.perfil)) {
+    if (!roles.includes(perfil)) {
       return res.status(403).json({ erro: "Acesso negado" });
     }
 

@@ -3,9 +3,6 @@ const pool = require('../config/database');
 
 class ParametroModel {
 
-  /**
-   * Busca todos os parâmetros
-   */
   static async findAll() {
     try {
       const query = `
@@ -32,11 +29,45 @@ class ParametroModel {
       return result.rows;
     } catch (error) {
       console.error('Erro ao buscar parâmetros:', error);
-      throw new Error(`Erro ao buscar parâmetros: ${error.message}`);
+      throw error;
     }
   }
 
+  static async update(id, dados) {
+    try {
+      const query = `
+        UPDATE parametro
+        SET 
+          nome = $1,
+          unidade_medida = $2,
+          limite_minimo = $3,
+          limite_maximo = $4,
+          legislacao_id = $5,
+          matriz_id = $6,
+          valor_parametro = $7
+        WHERE id = $8
+        RETURNING *;
+      `;
 
+      const values = [
+        dados.nome,
+        dados.unidade_medida,
+        dados.limite_minimo,
+        dados.limite_maximo,
+        dados.legislacao_id,
+        dados.matriz_id,
+        dados.valor_parametro,
+        id
+      ];
+
+      const result = await pool.query(query, values);
+      return result.rows[0];
+
+    } catch (error) {
+      console.error("Erro no model ao atualizar parâmetro:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = ParametroModel;

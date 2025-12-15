@@ -3,6 +3,7 @@
 
 # 🔐 Arquivos de ambiente
 **/.env
+**/enviroment.ts
 
 # 🛠️ Logs
 *.log
