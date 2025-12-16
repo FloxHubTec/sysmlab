@@ -19,14 +19,14 @@
 
   <div *ngIf="!isLoading && !errorMessage && labels.length === 0" class="empty-state alert alert-info">
     <i class="fas fa-info-circle"></i>
-    Nenhum parâmetro configurado para exibir.
+    Nenhum parâmetro configurado para exibir no gráfico.
   </div>
 
   <!-- Gráfico -->
   <div *ngIf="!isLoading && !errorMessage && hasData" class="chart-container">
 
     <div class="chart-center">
-      <div class="card shadow-sm border-0">
+      <div class="card">
         <div class="card-body">
           <h4 class="card-title mb-3 fw-bold text-secondary">
             Total de Parâmetros ({{ labels.length }})
