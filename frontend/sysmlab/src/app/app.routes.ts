@@ -46,6 +46,7 @@ export const routes: Routes = [
   {
     path: 'amostras',
     component: AmostraComponent,
+    canActivate: [authGuard],
     title: 'Registro de Amostras'
   },
 

@@ -18,6 +18,8 @@ const alertasRoutes = require('./routes/AlertaRoutes');
 const dashboardWebRoutes = require('./routes/DashboardWebRoutes');
 const amostraRoutes = require('./routes/AmostraRoutes');
 const usuariosRoutes = require("./routes/UsuarioRoutes");
+const gerenciamentoParametrosRoutes = require('./routes/GerenciamentoParametrosRoutes');
+
 
 // NOVAS ROTAS
 const legislacaoRoutes = require('./routes/LegislacaoRoutes');
@@ -47,6 +49,12 @@ app.use(
   authMiddleware,
   roleFromTable("Gestor"), // 🔐 vem da tabela
   usuariosRoutes
+);
+
+app.use(
+  '/gerenciamento-parametros',
+  authMiddleware,
+  gerenciamentoParametrosRoutes
 );
 
 app.use('/alertas', authMiddleware, roleFromTable("Gestor"), alertasRoutes);
