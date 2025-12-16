@@ -7,7 +7,7 @@
   </head>
 <body>
     <!-- HEADER FIXO COM MENU -->
-    <header class="sysmlab-header">
+    <header class="sysmlab-header" *ngIf="isLoggedIn">
         <div class="header-container">
             <!-- LOGO -->
             <div class="logo-container">
@@ -55,15 +55,15 @@
             <div class="user-section">
                 <div class="user-info">
                     <div class="user-avatar">
-                        LU
+                        {{ userName ? (userName | slice:0:2 | uppercase) : 'US' }}
                     </div>
                     <div class="user-details">
-                        <span class="user-name">Luciana Delavec</span>
-                        <span class="user-email">lucianadelavec&#64;gmail.com</span>
+                        <span class="user-name">{{ userName }}</span>
+                        <span class="user-email">{{ userEmail }}</span>
                     </div>
                 </div>
 
-                <a href="#" class="logout-btn" id="logout-btn">
+            <a (click)="logout()" class="logout-btn" id="logout-btn" style="cursor: pointer;">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Sair</span>
                 </a>

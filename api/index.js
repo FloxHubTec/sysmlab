@@ -69,4 +69,10 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log("Servidor iniciado na porta 3000"));
+// A Vercel precisa desta exportação
+module.exports = app;
+
+// Iniciar servidor apenas se NÃO estivermos na Vercel (desenvolvimento local)
+if (require.main === module) {
+  app.listen(3000, () => console.log("Servidor iniciado na porta 3000"));
+}
