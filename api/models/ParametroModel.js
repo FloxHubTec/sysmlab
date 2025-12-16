@@ -68,6 +68,53 @@ class ParametroModel {
       throw error;
     }
   }
+
+//Para o gerenciamento-parametros
+static async findAllGerenciamento() {
+  const result = await pool.query(`
+    SELECT 
+      p.id,
+      p.nome,
+      p.unidade_medida,
+      p.valor_parametro,
+      p.limite_minimo,
+      p.limite_maximo,
+
+      p.matriz_id,
+      m.nome AS matriz_nome,
+
+      p.legislacao_id,
+      l.nome AS legislacao_nome,
+      l.sigla AS legislacao_sigla
+    FROM parametro p
+    JOIN matriz m ON m.id = p.matriz_id
+    JOIN legislacao l ON l.id = p.legislacao_id
+    ORDER BY p.nome ASC
+  `);
+
+  return result.rows;
+}
+
+static async updateGerenciamento(id, dados) {
+  const result = await pool.query(`
+    UPDATE parametro
+    SET
+      valor_parametro = $1,
+      matriz_id = $2,
+      legislacao_id = $3
+    WHERE id = $4
+    RETURNING *;
+  `, [
+    dados.valor_parametro,
+    dados.matriz_id,
+    dados.legislacao_id,
+    id
+  ]);
+
+  return result.rows[0];
+}
+
+
 }
 
 module.exports = ParametroModel;

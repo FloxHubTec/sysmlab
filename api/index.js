@@ -18,6 +18,8 @@ const alertasRoutes = require('./routes/AlertaRoutes');
 const dashboardWebRoutes = require('./routes/DashboardWebRoutes');
 const amostraRoutes = require('./routes/AmostraRoutes');
 const usuariosRoutes = require("./routes/UsuarioRoutes");
+const gerenciamentoParametrosRoutes = require('./routes/GerenciamentoParametrosRoutes');
+
 
 // NOVAS ROTAS
 const legislacaoRoutes = require('./routes/LegislacaoRoutes');
@@ -49,6 +51,12 @@ app.use(
   usuariosRoutes
 );
 
+app.use(
+  '/gerenciamento-parametros',
+  authMiddleware,
+  gerenciamentoParametrosRoutes
+);
+
 app.use('/alertas', authMiddleware, roleFromTable("Gestor"), alertasRoutes);
 
 
@@ -61,4 +69,10 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log("Servidor iniciado na porta 3000"));
+// A Vercel precisa desta exportação
+module.exports = app;
+
+// Iniciar servidor apenas se NÃO estivermos na Vercel (desenvolvimento local)
+if (require.main === module) {
+  app.listen(3000, () => console.log("Servidor iniciado na porta 3000"));
+}

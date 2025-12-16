@@ -12,7 +12,7 @@
           <th>Limite Máximo</th>
           <th>Matriz</th>
           <th>Legislação</th>
-          <th>Ação</th>
+          <th>Editar</th>
         </tr>
       </thead>
 
@@ -24,18 +24,15 @@
           <td>{{ p.limite_maximo }}</td>
           <td>{{ p.matriz_nome }}</td>
           <td>{{ p.legislacao_sigla }}</td>
-
           <td class="action-col">
-            <button class="edit-btn" (click)="abrirEdicao(p)">
-              ✏️
-            </button>
+            <button class="edit-btn" (click)="abrirEdicao(p)"> <i class="fas fa-edit"></i></button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- MODAL DE EDIÇÃO -->
+  <!-- MODAL -->
   <div class="modal" *ngIf="editando">
     <div class="modal-content">
 
@@ -90,8 +87,8 @@
           <button class="btn-save" type="submit">Salvar</button>
           <button class="btn-cancel" type="button" (click)="fechar()">Cancelar</button>
         </div>
-      </form>
 
+      </form>
     </div>
   </div>
 
