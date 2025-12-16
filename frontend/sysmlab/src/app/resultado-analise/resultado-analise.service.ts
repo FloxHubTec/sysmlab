@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../../config/api.config';
 
 // Interfaces
 export interface Amostra {
@@ -89,7 +90,7 @@ export interface ErrorResponse {
   providedIn: 'root'
 })
 export class ResultadoAnaliseService {
-  private apiUrl = 'http://localhost:3000/resultados-analise';
+  private apiUrl = `${API_CONFIG.baseUrl}/resultados-analise`;
 
   constructor(private http: HttpClient) { }
 

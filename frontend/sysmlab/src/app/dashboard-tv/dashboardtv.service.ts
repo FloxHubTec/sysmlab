@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { API_CONFIG } from '../../config/api.config';
 
 export interface ComplianceData {
   id: number;
@@ -33,7 +34,7 @@ export interface DashboardTvResponse {
   providedIn: 'root'
 })
 export class DashboardTvService {
-  private apiUrl = 'http://localhost:3000/dashboardtv';
+  private apiUrl = `${API_CONFIG.baseUrl}/dashboardtv`;
 
   constructor(private http: HttpClient) { }
 

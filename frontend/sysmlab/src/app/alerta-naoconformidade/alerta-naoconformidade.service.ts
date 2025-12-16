@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../../config/api.config';
 
 // Interface de um item de Alerta
 export interface Alerta {
@@ -40,7 +41,7 @@ export interface AlertaResponse {
 export class AlertaNaoConformidadeService {
 
   // URL da API que criamos no arquivo alertasRoutes.js
-  private apiUrl = 'http://localhost:3000/alertas';
+  private apiUrl = `${API_CONFIG.baseUrl}/alertas`;
 
   constructor(private http: HttpClient) {}
 

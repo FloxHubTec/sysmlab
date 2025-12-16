@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../../config/api.config';
 
 // --- INTERFACES ---
 
@@ -56,7 +57,7 @@ export interface ApiResponse<T> {
 export class AmostraService {
 
   // URL base do módulo de Amostras
-  private apiUrl = 'http://localhost:3000/amostras';
+  private apiUrl = `${API_CONFIG.baseUrl}/amostras`;
 
   constructor(private http: HttpClient) { }
 

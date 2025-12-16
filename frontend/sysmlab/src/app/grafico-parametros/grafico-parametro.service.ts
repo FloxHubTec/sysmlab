@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../../config/api.config';
 
 // --- INTERFACES CORRIGIDAS ---
 
@@ -27,7 +28,7 @@ export interface ApiResponse<T> {
 export class GraficoParametroService {
 
   // URL da Rota que criamos no Backend (ajuste a porta se necessário)
-  private apiUrl = 'http://localhost:3000/grafico-parametros';
+  private apiUrl = `${API_CONFIG.baseUrl}/grafico-parametros`;
 
   constructor(private http: HttpClient) { }
 

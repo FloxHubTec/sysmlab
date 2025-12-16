@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { API_CONFIG } from '../../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GerencimantoParametroService {
 
-  private api = 'http://localhost:3000/gerenciamento-parametros';
+  private api = `${API_CONFIG.baseUrl}/gerenciamento-parametros`;
 
   constructor(private http: HttpClient) {}
 
@@ -15,6 +16,6 @@ export class GerencimantoParametroService {
   }
 
   updateParametro(id: number, dados: any) {
-    return this.http.put(`http://localhost:3000/parametros/${id}`, dados);
+    return this.http.put(`${API_CONFIG.baseUrl}/parametros/${id}`, dados);
   }
 }
